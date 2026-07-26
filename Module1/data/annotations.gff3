@@ -1,0 +1,34 @@
+##gff-version 3
+##sequence-region chr1 1 50000
+chr1	teaching	gene	1001	2200	.	-	.	ID=gene1;Name=thrA
+chr1	teaching	mRNA	1001	2200	.	-	.	ID=mrna1;Parent=gene1;Name=thrA
+chr1	teaching	exon	1001	1600	.	-	.	ID=exon1a;Parent=mrna1
+chr1	teaching	exon	1601	2200	.	-	.	ID=exon1b;Parent=mrna1
+chr1	teaching	gene	6001	6600	.	-	.	ID=gene2;Name=lacZ
+chr1	teaching	mRNA	6001	6600	.	-	.	ID=mrna2;Parent=gene2;Name=lacZ
+chr1	teaching	exon	6001	6300	.	-	.	ID=exon2a;Parent=mrna2
+chr1	teaching	exon	6301	6600	.	-	.	ID=exon2b;Parent=mrna2
+chr1	teaching	gene	11001	12500	.	+	.	ID=gene3;Name=recA
+chr1	teaching	mRNA	11001	12500	.	+	.	ID=mrna3;Parent=gene3;Name=recA
+chr1	teaching	exon	11001	11750	.	+	.	ID=exon3a;Parent=mrna3
+chr1	teaching	exon	11751	12500	.	+	.	ID=exon3b;Parent=mrna3
+chr1	teaching	gene	16001	16900	.	-	.	ID=gene4;Name=rpoB
+chr1	teaching	mRNA	16001	16900	.	-	.	ID=mrna4;Parent=gene4;Name=rpoB
+chr1	teaching	exon	16001	16450	.	-	.	ID=exon4a;Parent=mrna4
+chr1	teaching	exon	16451	16900	.	-	.	ID=exon4b;Parent=mrna4
+chr1	teaching	gene	21001	21600	.	+	.	ID=gene5;Name=gyrA
+chr1	teaching	mRNA	21001	21600	.	+	.	ID=mrna5;Parent=gene5;Name=gyrA
+chr1	teaching	exon	21001	21300	.	+	.	ID=exon5a;Parent=mrna5
+chr1	teaching	exon	21301	21600	.	+	.	ID=exon5b;Parent=mrna5
+chr1	teaching	gene	26001	27200	.	-	.	ID=gene6;Name=dnaA
+chr1	teaching	mRNA	26001	27200	.	-	.	ID=mrna6;Parent=gene6;Name=dnaA
+chr1	teaching	exon	26001	26600	.	-	.	ID=exon6a;Parent=mrna6
+chr1	teaching	exon	26601	27200	.	-	.	ID=exon6b;Parent=mrna6
+chr1	teaching	gene	31001	32500	.	+	.	ID=gene7;Name=ftsZ
+chr1	teaching	mRNA	31001	32500	.	+	.	ID=mrna7;Parent=gene7;Name=ftsZ
+chr1	teaching	exon	31001	31750	.	+	.	ID=exon7a;Parent=mrna7
+chr1	teaching	exon	31751	32500	.	+	.	ID=exon7b;Parent=mrna7
+chr1	teaching	gene	36001	37500	.	+	.	ID=gene8;Name=ompA
+chr1	teaching	mRNA	36001	37500	.	+	.	ID=mrna8;Parent=gene8;Name=ompA
+chr1	teaching	exon	36001	36750	.	+	.	ID=exon8a;Parent=mrna8
+chr1	teaching	exon	36751	37500	.	+	.	ID=exon8b;Parent=mrna8

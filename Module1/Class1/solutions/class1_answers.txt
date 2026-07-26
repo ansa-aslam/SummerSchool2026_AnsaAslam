@@ -1,0 +1,35 @@
+# Class 1 answers — record the command used for each question
+
+Part A
+1: pwd; ls -lh ~/module1/data
+2: mkdir -p ~/module1/exercise1 && cd ~/module1/exercise1
+3: touch test.txt; cp test.txt test_backup.txt; mv test.txt final.txt; ls -l
+4: ls && rm test_backup.txt
+5: chmod +x final.txt; ls -l final.txt
+
+Part B
+6: head -4 ~/module1/data/genes.fasta
+7: tail -3 ~/module1/data/ecoli_genome.fasta
+8: wc -l ~/module1/data/ecoli_genome.fasta
+9: grep ">" ~/module1/data/genes.fasta
+
+Part C
+10: grep -c ">" ~/module1/data/genes.fasta
+11: grep -c ">" ~/module1/data/ecoli_genome.fasta
+12: grep -i "recA" ~/module1/data/genes.fasta
+13: grep -v "^#" ~/module1/data/annotations.gff3 | wc -l
+14: cut -f3 ~/module1/data/annotations.gff3 | grep -v "^#" | sort | uniq -c
+15: grep -v ">" ~/module1/data/genes.fasta | tr -d '\n' | tr -cd 'GCgc' | wc -c
+
+Part D
+16: grep ">" ~/module1/data/genes.fasta > ~/module1/gene_headers.txt && echo "analysis complete" >> ~/module1/gene_headers.txt
+17: grep -c ">" ~/module1/data/*.fasta
+18: cut -f9 ~/module1/data/annotations.gff3 | grep -v "^#" | sed -n 's/.*Name=\([^;]*\).*/\1/p'
+
+Part E
+19: ./summarize.sh ~/module1/data   # modified script also prints char counts
+20: ./count_features.sh ~/module1/data/annotations.gff3
+
+Challenge
+21: grep ">" ~/module1/data/genes.fasta | sed 's/>//' | awk '{print length($0), $0}' | sort -nr | head -1
+22: (grep -v ">" ~/module1/data/ecoli_genome.fasta | tr -d '\n' | tr -cd 'GgCc' | wc -c; echo "/"; grep -v ">" ~/module1/data/ecoli_genome.fasta | tr -d '\n' | wc -c) | awk '{g=$1} NR==2{tot=$1} END{printf "%0.2f\n", (g/tot)*100}'

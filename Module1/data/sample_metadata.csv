@@ -1,0 +1,7 @@
+sample,condition,batch,rin
+control_1,control,A,8.2
+control_2,control,B,8.8
+control_3,control,A,9.1
+treated_1,treated,B,7.9
+treated_2,treated,A,9.7
+treated_3,treated,B,9.1

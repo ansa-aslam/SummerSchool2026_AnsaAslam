@@ -1,0 +1,5 @@
+>recA|Name=recA|Description=Recombinase A
+>lacZ|Name=lacZ|Description=Beta-galactosidase
+>geneX|Name=geneX|Description=Hypothetical protein
+
+analysis complete
