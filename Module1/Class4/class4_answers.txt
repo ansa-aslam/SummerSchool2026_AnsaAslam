@@ -1,0 +1,59 @@
+PART (A)
+(1) Conda is a package manager and environment management tool that installs software, handles dependencies, and creates isolated environments. Mamba is a faster replacement for conda that uses the same commands and package repositories but has a faster dependency solver, making package installation and environment creation quicker and more reliable, especially for complex bioinformatics software.
+
+(2) Installing all packages into system Python can cause dependency conflicts because different projects may require different versions of the same package. It can also interfere with system programs that rely on the default Python setup. Using separate environments keeps software organized, prevents conflicts, and makes projects easier to reproduce.
+
+(3)An environment is an isolated setup that contains a specific Python version and a collection of installed packages needed for a particular project. Each environment works independently, so changing packages in one environment does not affect other projects or the system Python installation.
+
+PART (B)
+(4) conda install -n base -c conda-forge mamba
+
+(5) mamba --version
+
+(6) conda config --add channels conda-forge
+conda config --set channel_priority strict
+
+PART (C)
+(7) conda create -n bioinfo python=3.11
+
+(8) conda activate bioinfo
+
+(9) conda env list
+
+(10) conda remove -n bioinfo --all
+
+PART (D)
+(11) conda install -n bioinfo numpy pandas biopython
+
+(12) python -c "import numpy, pandas, Bio; print(numpy.__version__, pandas.__version__, Bio.__version__)"
+
+(13) conda remove -n bioinfo pandas 
+
+PART (E) 
+(14) conda create -n pinned_env python=3.11 numpy=1.26.4 pandas=2.2.2 biopython=1.83
+
+(15) 
+name: pinned_env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy=1.26.4
+  - pandas=2.2.2
+  - biopython=1.83
+
+(16) conda env export --no-builds > pinned_env.yml
+
+PART (F)
+(17) Installing without a version pin (numpy) installs the latest compatible version available at that time. Installing with numpy=1.26.4 fixes the exact version, making the environment more consistent and reproducible.
+
+(18) Because the available package versions may change over time, each student may install a different version of numpy or its dependencies, which can lead to different results.
+
+(19) Export the environment details to a file (such as environment.yml) with the package versions specified, then share that file so others can recreate the same setup.
+
+CHALLENGE
+(20) mamba create -n qc_tools python=3.11 fastqc multiqc pandas -c bioconda -c conda-forge
+
+(21) conda env export -n qc_tools --no-builds > qc_tools.yml
+
+(22) I would choose mamba when installing many packages or complex bioinformatics tools because it solves dependencies faster and reduces installation time. For small environments with only a few simple packages, the difference between mamba and conda is usually not very important.

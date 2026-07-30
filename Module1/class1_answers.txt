@@ -1,0 +1,97 @@
+QUESTION 1
+pwd
+ls -lh ~/module1/data
+
+QUESTION 2
+mkdir ~/SummerSchool2026-main/Module1/Class1/exercise1
+cd ~/SummerSchool2026-main/Module1/Class1/exercise1
+
+QUESTION 3
+touch test.txt
+cp test.txt test_backup.txt
+mv test.txt final.txt
+ls
+
+QUESTION 4
+rm -r test_backup.txt 
+ls
+
+QUESTION 5
+chmod +x final.txt 
+ls -lh final.txt
+
+QUESTION 6
+head  -4 ~/SummerSchool2026-main/Module1/data/genes.fasta
+
+QUESTION 7
+tail -3 ~/SummerSchool2026-main/Module1/data/ecoli_genome.fasta
+
+QUESTION 8
+wc -l ~/SummerSchool2026-main/Module1/data/ecoli_genome.fasta
+
+QUESTION 9
+grep '^>' ~/SummerSchool2026-main/Module1/data/genes.fasta
+
+OR
+
+awk '/^>/' ~/SummerSchool2026-main/Module1/data/genes.fasta
+
+QUESTION 10
+grep -c '^>' ~/SummerSchool2026-main/Module1/data/genes.fasta
+
+QUESTION 11
+grep -c '^>' ~/SummerSchool2026-main/Module1/data/ecoli_genome.fasta
+
+QUESTION 12
+grep -ic '^>.*recA' ~/SummerSchool2026-main/Module1/data/genes.fasta
+
+QUESTION 13
+grep -v '^#' ~/SummerSchool2026-main/Module1/data/annotations.gff3 | wc -l
+
+QUESTION 14
+head ~/SummerSchool2026-main/Module1/data/annotations.gff3
+cut -f3 ~/SummerSchool2026-main/Module1/data/annotations.gff3 | grep -E '^(gene|mRNA|ex
+on)$' | sort | uniq -c
+
+QUESTION 15
+grep -Ev '^(#|>)' ~/SummerSchool2026-main/Module1/data/genes.fasta | grep -o '[GC]' | wc -l
+
+QUESTION 16
+grep '^>' ~/SummerSchool2026-main/Module1/data/genes.fasta > ~/SummerSchool2026-main/Module1/gene_headers.txt
+echo 'analysis complete' >> gene_headers.txt 
+cat gene_headers.txt 
+
+QUESTION 17
+grep -c '^>' ~/SummerSchool2026-main/Module1/data/*.fasta
+
+QUESTION 18
+head ~/SummerSchool2026-main/Module1/data/annotations.gff3 
+grep -P '\tgene\t' ~/SummerSchool2026-main/Module1/data/annotations.gff3 | cut -f9 | sed -E 's/.*Name=([^;]+).*/\1/' 
+
+QUESTION 19
+nano summarize.sh
+#!/bin/bash
+for file in ~/SummerSchool2026-main/Module1/data/*.fasta
+do
+        echo "$file has $(grep -v '^>' "$file" | wc -c ) has sequence characters"
+done
+
+chmod +x summarize.sh
+bash summarize.sh
+
+QUESTION 20
+nano count_features.sh
+
+#!/bin/bash
+echo "$1 has feature counts"
+cut -f3 "$1" | grep -E '^(gene|mRNA|exon)$' | sort |uniq -c
+
+bash count_features.sh  ~/SummerSchool2026-main/Module1/data/annotations.gff3
+
+QUESTION 21
+grep '^>' ~/SummerSchool2026-main/Module1/data/genes.fasta | cut -c2- | awk 'length > m
+ax {max=length; gene=$0} END {print gene}'
+
+QUESTION 22
+grep -v '^>' ~/SummerSchool2026-main/Module1/data/ecoli_genome.fasta | tr -d '\n' | awk
+ '{gc=gsub(/[GCgc]/,""); print (gc/length($0))*100}'

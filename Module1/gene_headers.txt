@@ -1,0 +1,9 @@
+>thrA gene product hypothetical_1 len=1200
+>lacZ gene product hypothetical_2 len=600
+>recA gene product hypothetical_3 len=1500
+>rpoB gene product hypothetical_4 len=900
+>gyrA gene product hypothetical_5 len=600
+>dnaA gene product hypothetical_6 len=1200
+>ftsZ gene product hypothetical_7 len=1500
+>ompA gene product hypothetical_8 len=1500
+analysis complete
