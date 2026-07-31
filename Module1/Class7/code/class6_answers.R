@@ -1,0 +1,261 @@
+setwd('//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code')
+
+library(tidyverse)
+dir.create("plots", showWarnings = FALSE)
+
+expr <- read_csv("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/data/gene_expression.csv")
+head(expr)
+
+meta <- read_csv("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/data/sample_metadata.csv")
+head(meta)
+
+expr_tidy <- expr |>
+  pivot_longer(cols = -gene_id, names_to = "sample", values_to = "count") |>
+  left_join(meta, by = "sample")
+
+head(expr_tidy)
+
+gene_summary <- expr |>
+  mutate(mean_control = (control_1 + control_2 + control_3) / 3,
+         mean_treated = (treated_1 + treated_2 + treated_3) / 3,
+         log2FC       = log2((mean_treated + 1) / (mean_control + 1))) |>
+  select(gene_id, mean_control, mean_treated, log2FC)
+
+head(gene_summary)
+
+#-----------PART(A)------------
+#--------------1---------------
+# Three pieces of any ggplot:
+# 1. Data: the dataset to plot.
+# 2. Aesthetics (aes): maps variables to visual properties (e.g., x, y, color).
+# 3. Geoms: the type of plot used to display the data (e.g., points, bars, lines).
+
+simple_ggplot <- ggplot(expr_tidy, aes(x = count))
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/simple_ggplot.png", simple_ggplot)
+
+#--------------2---------------
+count_hist <- ggplot(expr_tidy, aes(x = count)) +
+  geom_histogram(bins = 20)
+
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/count_hist.png", count_hist)
+# Biological interpretation: The distribution is strongly right-skewed, indicating that most genes are expressed at low to moderate levels, while only a small subset of genes is highly expressed, which is typical of gene expression datasets.
+
+#--------------3---------------
+log_hist <- ggplot(expr_tidy, aes(x = count)) +
+  geom_histogram(bins = 20) +
+  scale_x_log10()
+
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/log_hist.png", log_hist)
+
+# Biological interpretation:Gene expression spans several orders of magnitude, and the log scale makes both low- and high-expression genes easier to compare in the same plot.
+
+#-----------PART(B)------------
+#--------------4---------------
+count_cond_box <- ggplot(expr_tidy, aes(x = condition, y = count, fill = condition)) +
+  geom_boxplot()
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/count_cond_box.png", count_cond_box)
+
+#Biological interpretation: The treated samples show a slightly higher median expression and a wider spread than the control samples, but the distributions overlap substantially, suggesting treatment affects only a subset of genes rather than causing a global increase or decrease in expression.
+
+#--------------5---------------
+count_batch_box <- ggplot(expr_tidy, aes(x = batch, y = count, fill = batch)) +
+  geom_boxplot()
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/count_batch_box.png", count_batch_box)
+
+# Biological interpretation: Samples from batches A and B have very similar expression distributions, indicating little evidence of a strong batch effect and suggesting batch is unlikely to confound the biological comparison.
+
+#--------------6---------------
+count_dist_by_cond <- ggplot(expr_tidy, aes(x = count)) +
+  geom_histogram(bins = 20) +
+  facet_wrap(~ condition)
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/count_dist_by_cond.png", count_dist_by_cond)
+
+# Biological interpretation: Control and treated samples have similar right-skewed expression distributions, with most genes expressed at low to moderate levels and relatively few highly expressed genes, indicating comparable overall expression profiles between conditions.
+
+#--------------7---------------
+sample_rin_barplot <- ggplot(meta, aes(x = sample, y = rin, fill = sample)) +
+  geom_col() +
+  geom_hline(yintercept = 7, linetype = "dashed", color = "red")
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/sample_rin_barplot.png", sample_rin_barplot)
+
+# Biological interpretation: All six RNA samples have RIN values above the recommended quality threshold of 7, indicating high-quality RNA suitable for reliable differential gene expression analysis.
+
+#-----------PART(C)------------
+#--------------8---------------
+log2FC_barplot <- ggplot(gene_summary, 
+                         aes(x = reorder(gene_id, log2FC), 
+                             y = log2FC, 
+                             fill = log2FC > 0)) +
+  geom_col() +
+  coord_flip()
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/log2FC_barplot.png", log2FC_barplot)
+
+# Top 3 up-regulated genes
+gene_summary |>
+  arrange(desc(log2FC)) |>
+  slice_head(n = 3)
+
+# Top 3 down-regulated genes
+gene_summary |>
+  arrange(log2FC) |>
+  slice_head(n = 3)
+
+# Biological interpretation: The treatment strongly upregulated crp, ompA, and rpoB, while emrB, dnaA, and tolC were the most downregulated. This indicates that treatment activates expression of specific stress/regulatory genes while repressing genes involved in cell growth or membrane-associated functions.
+
+#--------------9---------------
+control_vs_treated_scatter <- ggplot(gene_summary, aes(x = mean_control, y = mean_treated)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0)
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/control_vs_treated_scatter.png", control_vs_treated_scatter)
+
+# Biological interpretation: Genes above the y = x line are more highly expressed after treatment (upregulated), whereas genes below the line are expressed less after treatment (downregulated). The presence of points on both sides of the line indicates that the treatment induces gene-specific expression changes rather than a uniform increase or decrease across all genes.
+
+#--------------10--------------
+responders_scatter <- ggplot(gene_summary, 
+                             aes(x = mean_control, 
+                                 y = mean_treated, 
+                                 color = log2FC > 0)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0) +
+  geom_text(
+    data = subset(gene_summary, abs(log2FC) > 1),
+    aes(label = gene_id),
+    vjust = -0.5
+  )
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/responders_scatter.png", responders_scatter)
+
+# Biological interpretation: The strongest treatment responders are crp, ompA, and rpoB, which show marked induction, while emrB, dnaA, and tolC exhibit substantial repression. These genes display the largest expression changes and are therefore the primary candidates for treatment-responsive biomarkers.
+
+#--------------11--------------
+top5_genes <- expr_tidy |>
+  group_by(gene_id) |>
+  summarise(mean_count = mean(count)) |>
+  arrange(desc(mean_count)) |>
+  slice_head(n = 5)
+
+top_expression_genes <- ggplot(top5_genes, 
+                               aes(x = reorder(gene_id, mean_count), 
+                                   y = mean_count)) +
+  geom_col(fill = "steelblue") +
+  coord_flip()
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/top_expression_genes.png", top_expression_genes)
+
+# Biological interpretation: soxS, crp, ftsZ, ompA, and acrB are the most highly expressed genes overall. However, high expression does not necessarily correspond to the strongest treatment response, demonstrating that abundant genes are not always the most differentially regulated.
+
+#-----------PART(D)------------
+#-------------12---------------
+p_box_condition <- ggplot(expr_tidy, 
+                          aes(x = condition, 
+                              y = count, 
+                              fill = condition)) +
+  geom_boxplot() +
+  labs(
+    title = "Gene Expression Counts by Experimental Condition",
+    x = "Condition",
+    y = "Expression Count"
+  ) +
+  theme_bw() +
+  scale_fill_manual(values = c("control" = "skyblue",
+                               "treated" = "tomato"))
+
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/p_box_condition.png", p_box_condition)
+
+# Biological interpretation: The treated samples have a slightly higher median expression level and a wider range of expression than the control samples. However, the large overlap between the two groups suggests that treatment does not change overall gene expression, but instead affects the expression of specific genes.
+
+#-------------13---------------
+selected_genes <- c("crp", "ompA", "rpoB", "emrB", "tolC", "dnaA")
+
+gene_subset <- expr_tidy |>
+  filter(gene_id %in% selected_genes)
+
+p_gene_facets <- ggplot(gene_subset,
+                        aes(x = condition,
+                            y = count,
+                            fill = condition)) +
+  geom_boxplot() +
+  facet_wrap(~ gene_id) +
+  labs(
+    title = "Expression Response of Selected Genes",
+    x = "Condition",
+    y = "Expression Count"
+  ) +
+  theme_bw() +
+  scale_fill_manual(values = c("control" = "skyblue",
+                               "treated" = "tomato"))
+
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/p_gene_facets.pdf", p_gene_facets)
+
+# Biological interpretation: The faceted plots show that different genes respond differently to the treatment. Genes such as crp, ompA, and rpoB are clearly upregulated in the treated samples, whereas emrB, tolC, and dnaA are downregulated, showing that the treatment produces gene-specific rather than global changes in expression.
+
+#-------------14---------------
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/six_gene_expression_facets.pdf",
+       plot = p_gene_facets,
+       width = 10,
+       height = 7)
+
+# Journals often prefer PDF figures because vector graphics can be resized without losing quality.
+
+#-----------PART(E)------------
+#-------------15---------------
+# Several genes show a clear response to the treatment. crp, ompA, and rpoB are strongly upregulated, while emrB, tolC, and dnaA are downregulated compared with the control samples. Most of the remaining genes lie close to the y = x line, indicating that the treatment affects only a subset of genes rather than causing a global change in expression.
+
+#-------------16----------------
+# Although the overall boxplot shows similar expression distributions between the control and treated groups, it only summarizes all genes together and masks individual gene responses. The scatter plot and log2FC plots clearly show that several genes are strongly upregulated or downregulated, demonstrating that the treatment has a specific biological effect on selected genes.
+
+#----------CHALLENGE-----------
+#--------------17--------------
+gene_summary <- gene_summary |>
+  mutate(
+    signif = abs(log2FC),
+    response = case_when(
+      log2FC > 1 ~ "Up",
+      log2FC < -1 ~ "Down",
+      TRUE ~ "No change"
+    )
+  )
+
+volcano_plot <- ggplot(gene_summary,
+                       aes(x = log2FC,
+                           y = signif,
+                           color = response)) +
+  geom_point(size = 3) +
+  geom_text(
+    data = subset(gene_summary, abs(log2FC) > 1),
+    aes(label = gene_id),
+    vjust = -0.5
+  ) +
+  theme_bw() +
+  labs(
+    title = "Volcano-style Plot of Gene Responses",
+    x = "log2 Fold Change",
+    y = "Simulated Significance"
+  )
+
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/volcano_plot.png", volcano_plot)
+
+# Biological interpretation: The genes in the upper-right corner (crp, ompA, and rpoB) are the strongest upregulated responders to the treatment, while the genes in the upper-left corner (emrB, dnaA, and tolC) are the strongest downregulated responders (candidates for further investigation.). Most other genes cluster near log2FC = 0 with low simulated significance, indicating that they show little or no response to the treatment.
+
+#--------------18---------------
+selected_genes <- c("crp", "ompA", "rpoB", "emrB", "tolC", "dnaA")
+
+replicate_plot <- expr_tidy |>
+  filter(gene_id %in% selected_genes) |>
+  ggplot(aes(x = condition,
+             y = count,
+             color = condition)) +
+  geom_point(
+    position = position_jitter(width = 0.15),
+    size = 2.5
+  ) +
+  facet_wrap(~gene_id, scales = "free_y") +
+  theme_bw() +
+  labs(
+    title = "Replicate Consistency of Treatment-Responsive Genes",
+    x = "Condition",
+    y = "Expression Count"
+  )
+
+ggsave("//wsl.localhost/Ubuntu/home/aaslam123/SummerSchool2026-main/Module1/Class7/code/plots/replicate_consistency.png", replicate_plot)
+
+# Biological interpretation:
+# The replicate measurements are consistent within each condition, with all three treated or control samples showing similar expression levels for each gene. This indicates that the observed treatment responses are reproducible and are not driven by a single outlier sample.
