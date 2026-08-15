@@ -1,1 +1,15 @@
 .vscode
+# large data outputs and Windows metadata
+Module2/scrnaseq/C2W1/matrix.mtx.gz
+Module2/scrnaseq/HVG_expression_matrix.csv
+*.Zone.Identifier
+
+# large scRNA outputs and Windows metadata
+Module2/Project_scRNA+Report/Leukemia/matrix.mtx.gz
+Module2/Project_scRNA+Report/Normal/matrix.mtx.gz
+Module2/Project_scRNA+Report/result_datasets/HVG_expression_matrix.csv
+Module2/scrnaseq/C2W1/matrix.mtx.gz
+Module2/scrnaseq/C2W1/matrix.mtx.gz:Zone.Identifier
+Module2/scrnaseq/RZ1/matrix.mtx.gz
+Module2/scrnaseq/RZ1/matrix.mtx.gz:Zone.Identifier
+*.Zone.Identifier
